@@ -166,7 +166,7 @@
         }
 
         .mission:hover .description {
-            display:block;
+            display: block;
         }
 
         h6 {
@@ -178,6 +178,16 @@
         p {
             margin: 0;
             margin-top: 4px;
+        }
+
+        .version {
+            border-top: 1px dashed #555;
+            color: #888;
+            margin-left: 3px;
+            margin-top: 10px;
+            height: 1px;
+            overflow: visible;
+            text-align: right;
         }
     </style>
 
@@ -210,6 +220,14 @@
                 "Merlin3C": "Falcon 1-5 *"
             };
 
+            let versions = {
+                "B0003": "First Falcon 9 1.0",
+                "B1003 *": "First Falcon 9 1.1",
+                "B1019": "First Falcon 9 Full Thrust",
+                "B1039": "First Falcon 9 FT Block 4",
+                "B1046": "First Falcon 9 FT Block 5"
+            };
+
             let html = "";
 
             let boosters = {};
@@ -229,7 +247,6 @@
 
             for (let i = 0; i < data.length; i++) {
                 let flight = data[i];
-                //if (flight.is_tentative || flight.launch_success == null) continue;
 
                 for (let j = 0; j < flight.rocket.first_stage.cores.length; j++) {
                     let stage = flight.rocket.first_stage.cores[j];
@@ -321,11 +338,25 @@
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
                                     <p>Launch Pad: ${mission.site}</p>
-                                    <p>Target Orbit: ${Math.round(mission.periapsis)}kmx${Math.round(mission.apoapsis)}km ${Math.round(mission.inclination)}°</p>
-                                    <p>Mass: ${mission.mass}kg</p>
+                                    <p>Target Orbit: ${
+                                            (mission.periapsis == undefined || mission.periapsis == 0) ?
+                                            "unknown" :
+                                            "" + Math.round(mission.periapsis) + "kmx" + Math.round(mission.apoapsis) + "km " + Math.round(mission.inclination) + "°"
+                                        }</p>
+                                    <p>Mass: ${
+                                            (mission.mass == undefined) ?
+                                            "unknown" :
+                                            "" + mission.mass + "kg"
+                                        }</p>
                                 </span></span>`;
                     }
                     _html += "</li>";
+
+                    if (versions.hasOwnProperty(name)) {
+                        _html += `
+                            <div class="version">${versions[name]}</div>`;
+                    }
+
                     html = _html + html;
                 }
             }
