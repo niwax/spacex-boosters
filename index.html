@@ -50,6 +50,14 @@
             margin: 5px 6px;
         }
 
+        li.even {
+            background-color: black;
+        }
+
+        li.odd {
+            background-color: #211d1d;
+        }
+
         li > span {
             height: 24px;
             line-height: 24px;
@@ -203,6 +211,23 @@
             xhttp.send();
         }
 
+        function getLastDate(data) {
+            var lastDate = "1";
+            for (let i = 0; i < data.length; i++) {
+                let date = data[i].launch_date_local.replace("T", " ").split("+")[0];
+                if (date > lastDate) {
+                    lastDate = date;
+                }
+            }
+            return lastDate;
+        }
+
+        function getDateMs(dateStr) {
+            let date = new Date();
+            date.setFullYear(dateStr.slice(0,4), dateStr.slice(5,7), dateStr.slice(8,10));
+            return date.getTime();
+        }
+
         function create(data) {
             let estimates = {
                 "B1001": "B1001 *",
@@ -244,6 +269,7 @@
             };
 
             let maxenergy = 0;
+
 
             for (let i = 0; i < data.length; i++) {
                 let flight = data[i];
@@ -314,11 +340,17 @@
                 }
             }
 
+            let lastDateStr = getLastDate(data);
+            let lastDateMs = getDateMs(lastDateStr);
+            let firstDateMs = getDateMs("2006-03-25");
+            let alternate = "even";
+
             for (let name in boosters) {
                 if (boosters.hasOwnProperty(name)) {
                     let booster = boosters[name];
+                    alternate = (alternate=="even" ? "odd" : "even");
                     let _html = `
-                        <li>
+                        <li class="${alternate}">
                             <span class="heat">
                                 <span class="heat-indicator">
                                     <img src="heat-bw.png" />
@@ -330,10 +362,15 @@
                             </span>
                             <span class="name">${booster.name}</span>`;
 
+                    let xCorrect = 0;
                     for (let i = 0; i < booster.missions.length; i++) {
                         let mission = booster.missions[i];
+                        let missionDateMs = getDateMs(mission.date);
+                        
                         _html += `
-                            <span class="mission ${mission.success}">${mission.orbit}<span class="description">
+                            <div class="mission ${mission.success}" style="left:${
+                                Math.round(600*(missionDateMs-firstDateMs)/(lastDateMs-firstDateMs)) - xCorrect
+                                }px;display:inline-block;position:relative;">${mission.orbit}<span class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
@@ -348,7 +385,8 @@
                                             "unknown" :
                                             "" + mission.mass + "kg"
                                         }</p>
-                                </span></span>`;
+                                </span></div>`;
+                           xCorrect += 40;
                     }
                     _html += "</li>";
 
