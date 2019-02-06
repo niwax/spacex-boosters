@@ -374,11 +374,12 @@
                     for (let i = 0; i < booster.missions.length; i++) {
                         let mission = booster.missions[i];
                         let missionDateMs = getDateMs(mission.date);
-                        
+
                         _html += `
                             <div class="mission ${mission.success}" style="left:${
                                 Math.round(600*(missionDateMs-firstDateMs)/(lastDateMs-firstDateMs)) - xCorrect
                                 }px;top:${getMissionTop(booster,i)}px;display:inline-block;position:relative;">${mission.orbit}<span class="description">
+
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
