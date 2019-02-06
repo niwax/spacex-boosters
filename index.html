@@ -77,7 +77,7 @@
                 top: 0;
                 left: 0;
                 width: 24px;
-                height: 24px;
+                height: 42px;
             }
 
                 li .heat .heat-indicator img {
@@ -85,7 +85,7 @@
                     bottom: 0;
                     left: 0;
                     width: 24px;
-                    height: 24px;
+                    height: 42px;
                 }
 
                 li .heat .heat-indicator span {
@@ -93,13 +93,13 @@
                     bottom: 0;
                     left: 0;
                     width: 24px;
-                    height: 24px;
+                    height: 42px;
                     overflow: hidden;
                 }
 
             li .heat .status-indicator {
                 position: absolute;
-                top: 12px;
+                top: 32px;
                 left: 12px;
                 width: 16px;
                 height: 16px;
@@ -114,6 +114,7 @@
         li .name {
             font-size: 1.4em;
             width: 120px;
+            top:10px;
         }
 
         li .mission {
@@ -193,7 +194,7 @@
             color: #888;
             margin-left: 3px;
             margin-top: 10px;
-            height: 1px;
+            height: 12px;
             overflow: visible;
             text-align: right;
         }
@@ -226,6 +227,13 @@
             let date = new Date();
             date.setFullYear(dateStr.slice(0,4), dateStr.slice(5,7), dateStr.slice(8,10));
             return date.getTime();
+        }
+
+        function getMissionTop(booster,i) {
+            if (booster.missions.length == 1) {
+                return 10;
+            }
+            return 21*(i%2);
         }
 
         function create(data) {
@@ -370,7 +378,7 @@
                         _html += `
                             <div class="mission ${mission.success}" style="left:${
                                 Math.round(600*(missionDateMs-firstDateMs)/(lastDateMs-firstDateMs)) - xCorrect
-                                }px;display:inline-block;position:relative;">${mission.orbit}<span class="description">
+                                }px;top:${getMissionTop(booster,i)}px;display:inline-block;position:relative;">${mission.orbit}<span class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
@@ -388,7 +396,7 @@
                                 </span></div>`;
                            xCorrect += 40;
                     }
-                    _html += "</li>";
+                    _html += "<br>&nbsp;</li>";
 
                     if (versions.hasOwnProperty(name)) {
                         _html += `
