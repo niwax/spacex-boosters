@@ -48,6 +48,8 @@
 
         li {
             margin: 5px 6px;
+            display: flex;
+            flex-flow: row;
         }
 
         li > span {
@@ -64,44 +66,44 @@
             margin-left: 3px;
         }
 
-            li .heat .heat-indicator {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 24px;
-                height: 24px;
-            }
+        li .heat .heat-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+        }
 
-                li .heat .heat-indicator img {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 24px;
-                    height: 24px;
-                }
+        li .heat .heat-indicator img {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+        }
 
-                li .heat .heat-indicator span {
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    width: 24px;
-                    height: 24px;
-                    overflow: hidden;
-                }
+        li .heat .heat-indicator span {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            overflow: hidden;
+        }
 
-            li .heat .status-indicator {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                width: 16px;
-                height: 16px;
-                line-height: 12px;
-                vertical-align: middle;
-                text-align: center;
-                background-color: #d00;
-                border-radius: 8px;
-                opacity: 0.8;
-            }
+        li .heat .status-indicator {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 16px;
+            height: 16px;
+            line-height: 12px;
+            vertical-align: middle;
+            text-align: center;
+            background-color: #d00;
+            border-radius: 8px;
+            opacity: 0.8;
+        }
 
         li .name {
             font-size: 1.4em;
@@ -188,6 +190,32 @@
             height: 1px;
             overflow: visible;
             text-align: right;
+        }
+
+        .turnaround-spacer {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .turnaround-flex {
+            width: 100%;
+            display: flex;
+            flex-flow: row;
+        }
+
+        .turnaround-line {
+            flex: 1;
+            border-top: 1px solid #666;
+            height: 1px;
+
+            position: relative;
+            top: calc(1em - 1px);
+        }
+
+        .turnaround-label {
+            color: #aaa;
+            font-size: 0.8em;
+            vertical-align: middle;
         }
     </style>
 
@@ -276,6 +304,7 @@
                     booster.name = name;
                     mission.launcher = flight.rocket.rocket_name;
                     mission.date = flight.launch_date_local.replace("T", " ").split("+")[0];
+                    mission.isoDate = flight.launch_date_local;
                     mission.site = flight.launch_site.site_name;
                     mission.periapsis = flight.rocket.second_stage.payloads[0].orbit_params.periapsis_km;
                     mission.apoapsis = flight.rocket.second_stage.payloads[0].orbit_params.apoapsis_km;
@@ -330,10 +359,26 @@
                             </span>
                             <span class="name">${booster.name}</span>`;
 
+                    let lastMissionDate = new Date();
                     for (let i = 0; i < booster.missions.length; i++) {
                         let mission = booster.missions[i];
+
+                        if (i > 0) {
+                            let turnaround = Math.round((new Date(mission.isoDate).getTime() - lastMissionDate.getTime()) / (1000 * 60 * 60 * 24));
+                            _html += `
+                            <span class="turnaround-spacer" style="width: ${turnaround / 3.5}px">
+                                <div class="turnaround-flex">
+                                    <div class="turnaround-line"></div>
+                                    <div class="turnaround-label">${turnaround}</div>
+                                    <div class="turnaround-line"></div>
+                                </div>
+                            </span>
+                            `;
+                        }
+
                         _html += `
-                            <span class="mission ${mission.success}">${mission.orbit}<span class="description">
+                            <span class="mission ${mission.success}">${mission.orbit}
+                                <span class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
@@ -348,7 +393,10 @@
                                             "unknown" :
                                             "" + mission.mass + "kg"
                                         }</p>
-                                </span></span>`;
+                                </span>
+                            </span>`;
+
+                        lastMissionDate = new Date(mission.isoDate);
                     }
                     _html += "</li>";
 
