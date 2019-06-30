@@ -227,7 +227,7 @@
                     create(JSON.parse(xhttp.responseText));
                 }
             };
-            xhttp.open("GET", "https://cors.io/?https://api.spacexdata.com/v3/launches", true);
+            xhttp.open("GET", "https://cors-anywhere.herokuapp.com/https://api.spacexdata.com/v3/launches", true);
             xhttp.send();
         }
 
