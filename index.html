@@ -47,7 +47,7 @@
         }
 
         li {
-            margin: 5px 6px;
+            margin: 5px 3px;
             display: flex;
             flex-flow: row;
         }
@@ -110,6 +110,10 @@
             width: 120px;
         }
 
+	li .notAvailable {
+	   color: #aaa;
+	}
+
         li .mission {
             margin: 2px;
             padding: 2px 6px;
@@ -117,6 +121,7 @@
             border-radius: 8px;
             line-height: 16px;
             background-color: #050;
+	    border: 1px solid #000;
         }
 
         li .success-land {
@@ -125,6 +130,10 @@
 
         li .success-sea {
             background-color: #054;
+        }
+
+        li .landing-failure {
+            background-color: rgb(80, 80, 141);
         }
 
         li .failure {
@@ -136,9 +145,9 @@
         }
 
         li .tentative {
-            background-color: #222;
+            background-color: #444;
             border: 1px dashed #888;
-            color: #888;
+            color: #aaa;
         }
 
         .header {
@@ -167,9 +176,9 @@
             z-index: 1000;
         }
 
-        .mission:hover .description {
+        /*.mission:hover .description {
             display: block;
-        }
+        }*/
 
         h6 {
             font-size: 1em;
@@ -227,9 +236,56 @@
                     create(JSON.parse(xhttp.responseText));
                 }
             };
-            xhttp.open("GET", "https://cors.io/?https://api.spacexdata.com/v3/launches", true);
+            xhttp.open("GET", "https://cors-anywhere.herokuapp.com/https://api.spacexdata.com/v3/launches", true);
             xhttp.send();
         }
+
+        function cssrules() {
+            var rules = {};
+            for (var i=0; i<document.styleSheets.length; ++i) {
+                var cssRules = document.styleSheets[i].cssRules;
+                for (var j=0; j<cssRules.length; ++j)
+                    rules[cssRules[j].selectorText] = cssRules[j];
+            }
+            return rules;
+        }
+
+        function css_getclass(name) {
+            var rules = cssrules();
+            if (!rules.hasOwnProperty(name))
+                throw 'TODO: deal_with_notfound_case';
+            return rules[name];
+        }
+
+        function styleOn(styleName) {
+            let flightStyle = css_getclass(styleName);
+            flightStyle.style.borderColor = "white";
+            flightStyle.style.borderStyle = "solid";
+            flightStyle.style.borderWidth = "1px";
+        }
+
+        function styleOff(styleName) {
+            let flightStyle = css_getclass(styleName);
+            flightStyle.style.borderColor = "black";
+            flightStyle.style.borderStyle = "solid";
+            flightStyle.style.borderWidth = "1px";
+        }
+        var isHidden = false;
+
+	function hideIt(el, byClick=false) {
+            let newState = (byClick && isHidden) ? "block" : "none";
+            if (byClick) {
+	        isHidden = !isHidden;
+            }
+	    document.getElementById(el).style.display = newState;
+            console.log("hide " + el);
+        }
+        function showIt(el) {
+	    document.getElementById(el).style.display='block';
+            isHidden = false;
+            console.log("show " + el);
+        }
+
 
         function create(data) {
             let estimates = {
@@ -275,6 +331,11 @@
 
             for (let i = 0; i < data.length; i++) {
                 let flight = data[i];
+                let flighStyleName = "f"+flight.flight_number;
+                let flightStyle = document.createElement("style");
+                flightStyle.type = "text/css";
+                flightStyle.innerHTML = "span."+flighStyleName+" {border-width:1px;}";
+                document.getElementsByTagName('head')[0].appendChild(flightStyle);
 
                 for (let j = 0; j < flight.rocket.first_stage.cores.length; j++) {
                     let stage = flight.rocket.first_stage.cores[j];
@@ -312,6 +373,7 @@
                     mission.mass = flight.rocket.second_stage.payloads[0].payload_mass_kg;
                     mission.orbit = flight.rocket.second_stage.payloads[0].orbit;
                     mission.energy = energy[mission.orbit];
+                    mission.flightNumber = flight.flight_number;
 
                     if (!flight.launch_success) {
                         mission.success = "failure";
@@ -326,6 +388,10 @@
                         }
                     }
                     else {
+                        if (stage.landing_intent && flight.launch_success) {
+                            mission.success = "landing-failure";
+                        }
+                        //mission.success = "landing-failure";
                         booster.available = false;
                     }
 
@@ -343,6 +409,7 @@
                 }
             }
 
+            let descriptionId = 0;
             for (let name in boosters) {
                 if (boosters.hasOwnProperty(name)) {
                     let booster = boosters[name];
@@ -357,9 +424,10 @@
                                 </span>
                                 ${booster.available ? "" : '<span class="status-indicator">x</span>'}
                             </span>
-                            <span class="name">${booster.name}</span>`;
+                            <span class="name ${booster.available ? "" : "notAvailable"}">${booster.name}</span>`;
 
                     let lastMissionDate = new Date();
+
                     for (let i = 0; i < booster.missions.length; i++) {
                         let mission = booster.missions[i];
 
@@ -376,9 +444,14 @@
                             `;
                         }
 
+                        descriptionId++;
                         _html += `
-                            <span class="mission ${mission.success}">${mission.orbit}
-                                <span class="description">
+                            <span class="mission ${mission.success} f${mission.flightNumber}"
+                                onmouseenter="styleOn('span.f${mission.flightNumber}');showIt('desc${descriptionId}');"
+                                onmouseleave="styleOff('span.f${mission.flightNumber}');hideIt('desc${descriptionId}');"
+                                onclick="hideIt('desc${descriptionId}', true);">
+                                ${mission.orbit}
+                                <span id="desc${descriptionId}" class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
@@ -414,10 +487,10 @@
                     <span class="heat">Toast</span>
                     <span class="name">Name</span>
                     <span>
-                        Missions:
                         <span class="mission success-land">RTLS</span>
                         <span class="mission success-sea">ASDS</span>
                         <span class="mission expended">Expended</span>
+                        <span class="mission landing-failure">Landing failure</span>
                         <span class="mission failure">Failure</span>
                         <span class="mission tentative">Planned</span>
                         <span style="color: #777">Hover for more info</span>
