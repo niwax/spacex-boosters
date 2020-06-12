@@ -1,5 +1,6 @@
 ﻿<!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=800, initial-scale=1, shrink-to-fit=no">
@@ -7,12 +8,13 @@
     <title>SpaceX Booster List</title>
 
     <style type="text/css">
-        html, body {
+        html,
+        body {
             width: 100%;
         }
 
         body {
-            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: black;
             color: white;
             font-weight: normal;
@@ -47,12 +49,12 @@
         }
 
         li {
-            margin: 5px 6px;
+            margin: 5px 3px;
             display: flex;
             flex-flow: row;
         }
 
-        li > span {
+        li>span {
             height: 24px;
             line-height: 24px;
             vertical-align: middle;
@@ -110,6 +112,10 @@
             width: 120px;
         }
 
+        li .notAvailable {
+            opacity: 0.65;
+        }
+
         li .mission {
             margin: 2px;
             padding: 2px 6px;
@@ -117,6 +123,8 @@
             border-radius: 8px;
             line-height: 16px;
             background-color: #050;
+            border: 1px solid #000;
+            cursor: default;
         }
 
         li .success-land {
@@ -125,6 +133,18 @@
 
         li .success-sea {
             background-color: #054;
+        }
+
+        li .landing-failure {
+            background-image: linear-gradient(135deg, #333 50%, #700 50%);
+        }
+
+        li .landing-failure-land {
+            background-image: linear-gradient(135deg, #450 50%, #700 50%);
+        }
+
+        li .landing-failure-sea {
+            background-image: linear-gradient(135deg, #054 50%, #700 50%);
         }
 
         li .failure {
@@ -136,9 +156,9 @@
         }
 
         li .tentative {
-            background-color: #222;
+            background-color: #444;
             border: 1px dashed #888;
-            color: #888;
+            color: #aaa;
         }
 
         .header {
@@ -152,6 +172,10 @@
 
         .header span {
             font-size: 1em;
+        }
+
+        .mission:hover {
+            border: 1px solid white;
         }
 
         .mission .description {
@@ -231,6 +255,23 @@
             xhttp.send();
         }
 
+        var isHidden = false;
+
+        function hideIt(el, byClick = false) {
+            let newState = (byClick && isHidden) ? "block" : "none";
+            if (byClick) {
+                isHidden = !isHidden;
+            }
+            document.getElementById(el).style.display = newState;
+            console.log("hide " + el);
+        }
+        function showIt(el) {
+            document.getElementById(el).style.display = 'block';
+            isHidden = false;
+            console.log("show " + el);
+        }
+
+
         function create(data) {
             let estimates = {
                 "B1001": "B1001 *",
@@ -276,6 +317,11 @@
 
             for (let i = 0; i < data.length; i++) {
                 let flight = data[i];
+                let flighStyleName = "f" + flight.flight_number;
+                let flightStyle = document.createElement("style");
+                flightStyle.type = "text/css";
+                flightStyle.innerHTML = "span." + flighStyleName + " {border-width:1px;}";
+                document.getElementsByTagName('head')[0].appendChild(flightStyle);
 
                 for (let j = 0; j < flight.rocket.first_stage.cores.length; j++) {
                     let stage = flight.rocket.first_stage.cores[j];
@@ -313,6 +359,7 @@
                     mission.mass = flight.rocket.second_stage.payloads[0].payload_mass_kg;
                     mission.orbit = flight.rocket.second_stage.payloads[0].orbit;
                     mission.energy = energy[mission.orbit];
+                    mission.flightNumber = flight.flight_number;
 
                     if (!flight.launch_success) {
                         mission.success = "failure";
@@ -327,6 +374,15 @@
                         }
                     }
                     else {
+                        if (stage.landing_intent && flight.launch_success) {
+                            if (stage.landing_type == "ASDS") {
+                                mission.success = "landing-failure-sea";
+                            }
+                            else {
+                                mission.success = "landing-failure-land";
+                            }
+                        }
+
                         booster.available = false;
                     }
 
@@ -344,12 +400,13 @@
                 }
             }
 
+            let descriptionId = 0;
             for (let name in boosters) {
                 if (boosters.hasOwnProperty(name)) {
                     let booster = boosters[name];
                     let _html = `
                         <li>
-                            <span class="heat">
+                            <span class="heat ${booster.available ? "" : "notAvailable"}">
                                 <span class="heat-indicator">
                                     <img src="heat-bw.png" />
                                     <span style="height: ${booster.energy / maxenergy * 100}%">
@@ -358,9 +415,10 @@
                                 </span>
                                 ${booster.available ? "" : '<span class="status-indicator">x</span>'}
                             </span>
-                            <span class="name">${booster.name}</span>`;
+                            <span class="name ${booster.available ? "" : "notAvailable"}">${booster.name}</span>`;
 
                     let lastMissionDate = new Date();
+
                     for (let i = 0; i < booster.missions.length; i++) {
                         let mission = booster.missions[i];
 
@@ -377,23 +435,25 @@
                             `;
                         }
 
+                        descriptionId++;
                         _html += `
-                            <span class="mission ${mission.success}">${mission.orbit}
-                                <span class="description">
+                            <span class="mission ${mission.success}">
+                                ${mission.orbit}
+                                <span id="desc${descriptionId}" class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
                                     <p>Launch Pad: ${mission.site}</p>
                                     <p>Target Orbit: ${
-                                            (mission.periapsis == undefined || mission.periapsis == 0) ?
-                                            "unknown" :
-                                            "" + Math.round(mission.periapsis) + "kmx" + Math.round(mission.apoapsis) + "km " + Math.round(mission.inclination) + "°"
-                                        }</p>
+                            (mission.periapsis == undefined || mission.periapsis == 0) ?
+                                "unknown" :
+                                "" + Math.round(mission.periapsis) + "kmx" + Math.round(mission.apoapsis) + "km " + Math.round(mission.inclination) + "°"
+                            }</p>
                                     <p>Mass: ${
-                                            (mission.mass == undefined) ?
-                                            "unknown" :
-                                            "" + mission.mass + "kg"
-                                        }</p>
+                            (mission.mass == undefined) ?
+                                "unknown" :
+                                "" + mission.mass + "kg"
+                            }</p>
                                 </span>
                             </span>`;
 
@@ -412,13 +472,11 @@
 
             html = `
                 <li class="header">
-                    <span class="heat">Toast</span>
-                    <span class="name">Name</span>
                     <span>
-                        Missions:
                         <span class="mission success-land">RTLS</span>
                         <span class="mission success-sea">ASDS</span>
                         <span class="mission expended">Expended</span>
+                        <span class="mission landing-failure">Landing failure</span>
                         <span class="mission failure">Failure</span>
                         <span class="mission tentative">Planned</span>
                         <span style="color: #777">Hover for more info</span>
@@ -429,6 +487,7 @@
         }
     </script>
 </head>
+
 <body onload="load()">
     <div id="content">
         <h1>SpaceX Booster List</h1>
@@ -436,11 +495,16 @@
             <li>Loading Data</li>
         </ul>
         <div>
-            <p>* Some core numbers are not known for early flights. The numbers shown are estimates based on flight order.</p>
+            <p>* Some core numbers are not known for early flights. The numbers shown are estimates based on flight
+                order.</p>
         </div>
         <div class="imprint">
-            <p>Made by niwax (<a href="https://twitter.com/niwasox">Twitter</a>, <a href="https://www.reddit.com/user/niwasox">Reddit</a>, <a href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the <a href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a></p>
+            <p>Made by niwax (<a href="https://twitter.com/niwasox">Twitter</a>, <a
+                    href="https://www.reddit.com/user/niwasox">Reddit</a>, <a
+                    href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the <a
+                    href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a></p>
         </div>
     </div>
 </body>
+
 </html>
