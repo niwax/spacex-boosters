@@ -19,6 +19,7 @@
             color: white;
             font-weight: normal;
             font-size: 0.9em;
+            overflow-x: hidden;
         }
 
         #content {
@@ -49,13 +50,24 @@
         }
 
         li {
-            margin: 5px 3px;
+            padding: 5px 3px;
             display: flex;
             flex-flow: row;
         }
 
+        .missionList {
+            flex: 1;
+            display: flex;
+            flex-flow: row;
+            flex-wrap: wrap;
+        }
+
+        li:hover {
+            background-color: #202020;
+        }
+
         li>span {
-            height: 24px;
+            min-height: 24px;
             line-height: 24px;
             vertical-align: middle;
             display: inline-block;
@@ -66,6 +78,7 @@
             width: 24px;
             margin-right: 8px;
             margin-left: 3px;
+            flex-shrink: 0;
         }
 
         li .heat .heat-indicator {
@@ -93,7 +106,7 @@
             overflow: hidden;
         }
 
-        li .heat .status-indicator {
+        li .heat .flight-number {
             position: absolute;
             top: 12px;
             left: 12px;
@@ -101,19 +114,19 @@
             height: 16px;
             line-height: 12px;
             vertical-align: middle;
-            text-align: center;
-            background-color: #d00;
-            border-radius: 8px;
-            opacity: 0.8;
+            text-align: right;
+            color: #aaa;
         }
 
         li .name {
             font-size: 1.4em;
             width: 120px;
+            flex-shrink: 0;
         }
 
         li .notAvailable {
             opacity: 0.65;
+            text-decoration: line-through;
         }
 
         li .mission {
@@ -172,6 +185,10 @@
 
         .header span {
             font-size: 1em;
+        }
+
+        .mission {
+            position: relative;
         }
 
         .mission:hover {
@@ -301,6 +318,7 @@
 
             let boosters = {};
             let energy = {
+                "VLEO": 1.0,
                 "LEO": 1.0,
                 "SO": 1.0,
                 "PO": 1.03,
@@ -308,6 +326,7 @@
                 "ISS": 0.95,
                 "MEO": 1.2,
                 "GTO": 1.4,
+                "GEO": 1.4,
                 "ES-L1": 1.5,
                 "HEO": 1.5,
                 "HCO": 1.5
@@ -315,16 +334,14 @@
 
             let maxenergy = 0;
 
-            for (let i = 0; i < data.length; i++) {
-                let flight = data[i];
-                let flighStyleName = "f" + flight.flight_number;
+            for (let flight of data) {
+                let flightStyleName = "f" + flight.flight_number;
                 let flightStyle = document.createElement("style");
                 flightStyle.type = "text/css";
-                flightStyle.innerHTML = "span." + flighStyleName + " {border-width:1px;}";
+                flightStyle.innerHTML = "span." + flightStyleName + " {border-width:1px;}";
                 document.getElementsByTagName('head')[0].appendChild(flightStyle);
 
-                for (let j = 0; j < flight.rocket.first_stage.cores.length; j++) {
-                    let stage = flight.rocket.first_stage.cores[j];
+                for (let stage of flight.rocket.first_stage.cores) {
                     let booster = {
                         missions: [],
                         energy: 0,
@@ -404,18 +421,20 @@
             for (let name in boosters) {
                 if (boosters.hasOwnProperty(name)) {
                     let booster = boosters[name];
+
                     let _html = `
                         <li>
-                            <span class="heat ${booster.available ? "" : "notAvailable"}">
+                            <span class="heat">
                                 <span class="heat-indicator">
-                                    <img src="heat-bw.png" />
-                                    <span style="height: ${booster.energy / maxenergy * 100}%">
-                                        <img src="heat.png" />
+                                    <img src="booster.png" />
+                                    <span style="opacity: ${Math.sqrt(booster.energy / maxenergy)}">
+                                        <img src="soot.png" />
                                     </span>
                                 </span>
-                                ${booster.available ? "" : '<span class="status-indicator">x</span>'}
+                                <span class="flight-number">${booster.missions.length}</span>
                             </span>
-                            <span class="name ${booster.available ? "" : "notAvailable"}">${booster.name}</span>`;
+                            <span class="name ${booster.available ? "" : "notAvailable"}">${booster.name}</span>
+                            <span class="missionList">`;
 
                     let lastMissionDate = new Date();
 
@@ -459,7 +478,7 @@
 
                         lastMissionDate = new Date(mission.isoDate);
                     }
-                    _html += "</li>";
+                    _html += "</span></li>";
 
                     if (versions.hasOwnProperty(name)) {
                         _html += `
