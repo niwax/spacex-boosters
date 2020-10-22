@@ -261,15 +261,33 @@
     </style>
 
     <script type="text/javascript">
+        'strict'
+
         function load() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    create(JSON.parse(xhttp.responseText));
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({
+                    "query": {},
+                    "options": {
+                        "pagination": false,
+                        "populate": [
+                            "payloads",
+                            "core",
+                            "launchpad",
+                            "rocket",
+                            "ships",
+                            "cores.core"
+                        ]
+                    },
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            };
-            xhttp.open("GET", "https://cors-anywhere.herokuapp.com/https://api.spacexdata.com/v3/launches", true);
-            xhttp.send();
+            }
+
+            fetch("https://cors-anywhere.herokuapp.com/https://api.spacexdata.com/v4/launches/query", options)
+                .then(res => res.json())
+                .then(res => create(res.docs));
         }
 
         var isHidden = false;
@@ -341,14 +359,18 @@
                 flightStyle.innerHTML = "span." + flightStyleName + " {border-width:1px;}";
                 document.getElementsByTagName('head')[0].appendChild(flightStyle);
 
-                for (let stage of flight.rocket.first_stage.cores) {
+                for (let stage of flight.cores) {
+                    if (!stage.core) {
+                        continue;
+                    }
+
                     let booster = {
                         missions: [],
                         energy: 0,
                         available: true
                     };
 
-                    let name = stage.core_serial;
+                    let name = stage.core.serial;
                     if (name == null) continue;
 
                     if (estimates.hasOwnProperty(name)) {
@@ -363,26 +385,28 @@
                         success: "expended"
                     };
 
-                    mission.name = flight.mission_name;
+                    mission.name = flight.payloads.map(x => x.name).join(", ");
 
                     booster.name = name;
-                    mission.launcher = flight.rocket.rocket_name;
-                    mission.date = flight.launch_date_local.replace("T", " ").split("+")[0];
-                    mission.isoDate = flight.launch_date_local;
-                    mission.site = flight.launch_site.site_name;
-                    mission.periapsis = flight.rocket.second_stage.payloads[0].orbit_params.periapsis_km;
-                    mission.apoapsis = flight.rocket.second_stage.payloads[0].orbit_params.apoapsis_km;
-                    mission.inclination = flight.rocket.second_stage.payloads[0].orbit_params.inclination_deg;
-                    mission.mass = flight.rocket.second_stage.payloads[0].payload_mass_kg;
-                    mission.orbit = flight.rocket.second_stage.payloads[0].orbit;
+                    mission.launcher = flight.rocket.name;
+                    mission.date = flight.date_local.replace("T", " ").split("+")[0];
+                    mission.isoDate = flight.date_local;
+                    mission.site = flight.launchpad.name;
+
+                    let orbit = flight.payloads[0];
+                    mission.periapsis = orbit.periapsis_km;
+                    mission.apoapsis = orbit.apoapsis_km;
+                    mission.inclination = orbit.inclination_deg;
+                    mission.mass = flight.payloads.map(x => x.mass_kg).reduce((a, b) => { return a + b; });
+                    mission.orbit = orbit.orbit;
                     mission.energy = energy[mission.orbit];
                     mission.flightNumber = flight.flight_number;
 
-                    if (!flight.launch_success) {
+                    if (!flight.success) {
                         mission.success = "failure";
                     }
 
-                    if (stage.land_success) {
+                    if (stage.landing_success) {
                         if (stage.landing_type == "ASDS") {
                             mission.success = "success-sea";
                         }
@@ -391,7 +415,7 @@
                         }
                     }
                     else {
-                        if (stage.landing_intent && flight.launch_success) {
+                        if (stage.landing_attempt && flight.success) {
                             if (stage.landing_type == "ASDS") {
                                 mission.success = "landing-failure-sea";
                             }
@@ -403,7 +427,7 @@
                         booster.available = false;
                     }
 
-                    if (flight.is_tentative || flight.launch_success == null) {
+                    if (flight.is_tentative || flight.success == null) {
                         mission.success = "tentative";
                         booster.available = true;
                     }
@@ -463,13 +487,11 @@
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
                                     <p>Launch Pad: ${mission.site}</p>
-                                    <p>Target Orbit: ${
-                            (mission.periapsis == undefined || mission.periapsis == 0) ?
+                                    <p>Target Orbit: ${(mission.periapsis == undefined || mission.periapsis == 0) ?
                                 "unknown" :
                                 "" + Math.round(mission.periapsis) + "kmx" + Math.round(mission.apoapsis) + "km " + Math.round(mission.inclination) + "°"
                             }</p>
-                                    <p>Mass: ${
-                            (mission.mass == undefined) ?
+                                    <p>Mass: ${(mission.mass == undefined) ?
                                 "unknown" :
                                 "" + mission.mass + "kg"
                             }</p>
