@@ -285,7 +285,7 @@
                 }
             }
 
-            fetch("https://cors-anywhere.herokuapp.com/https://api.spacexdata.com/v4/launches/query", options)
+            fetch("https://api.spacexdata.com/v4/launches/query", options)
                 .then(res => res.json())
                 .then(res => create(res.docs));
         }
