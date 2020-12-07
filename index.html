@@ -231,6 +231,7 @@
             height: 1px;
             overflow: visible;
             text-align: right;
+            margin-bottom: 25px;
         }
 
         .turnaround-spacer {
@@ -257,6 +258,18 @@
             color: #aaa;
             font-size: 0.8em;
             vertical-align: middle;
+        }
+
+        .stats {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .statsbar {
+            text-align: center;
+            padding: 1px 0;
+            color: #eee;
+            overflow: hidden;
         }
     </style>
 
@@ -431,9 +444,43 @@
                 });
             }
 
-            let descriptionId = 0;
+            function renderStats(stats) {
+                let html = "";
+                const numbers = ["1st flights", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
+                const colors = ["rgb(90,80,70)", "rgb(80,75,71)", "rgb(70,70,72)", "rgb(60,65,73)"];
+
+                for (let i in stats) {
+                    let f = Math.sqrt(i / 10) * 7;
+
+                    html += `
+                        <div class="statsbar" style="flex: ${stats[i]}; background-color: rgb(${90 - f * 10}, ${80 - f * 5}, ${70 + f * 1})">
+                            ${numbers[i]}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="stats">
+                        ${html}
+                    </div>
+                `;
+            }
+
+            let stats = {};
+
             for (let name in boosters) {
                 if (boosters.hasOwnProperty(name)) {
+                    if (versions.hasOwnProperty(name)) {
+                        html =
+                            `<div class="version">
+                                ${versions[name]}
+                            </div>
+                            <div>
+                                ${renderStats(stats)}
+                            </div>` + html;
+                        stats = {};
+                    }
+
                     let booster = boosters[name];
 
                     let _html = `
@@ -453,6 +500,14 @@
                     let lastMissionDate = new Date();
 
                     for (let i = 0; i < booster.missions.length; i++) {
+                        if (stats.hasOwnProperty(i)) {
+                            stats[i]++;
+                        }
+                        else {
+                            stats[i] = 1;
+                        }
+                        console.log(JSON.stringify(stats), booster.name);
+
                         let mission = booster.missions[i];
 
                         if (i > 0) {
@@ -468,11 +523,10 @@
                             `;
                         }
 
-                        descriptionId++;
                         _html += `
                             <span class="mission ${mission.success}">
                                 ${mission.orbit}
-                                <span id="desc${descriptionId}" class="description">
+                                <span class="description">
                                     <h6>${mission.name}</h6>
                                     <p>Date: ${mission.date}</p>
                                     <p>Launcher: ${mission.launcher}</p>
@@ -492,14 +546,14 @@
                     }
                     _html += "</span></li>";
 
-                    if (versions.hasOwnProperty(name)) {
-                        _html += `
-                            <div class="version">${versions[name]}</div>`;
-                    }
-
                     html = _html + html;
                 }
             }
+
+            html =
+                `<div>
+                    ${renderStats(stats)}
+                </div>` + html;
 
             html = `
                 <li class="header">
@@ -526,14 +580,19 @@
             <li>Loading Data</li>
         </ul>
         <div>
-            <p>* Some core numbers are not known for early flights. The numbers shown are estimates based on flight
-                order.</p>
+            <p>
+                * Some core numbers are not known for early flights.
+                The numbers shown are estimates based on flight order.
+            </p>
         </div>
         <div class="imprint">
-            <p>Made by niwax (<a href="https://twitter.com/niwasox">Twitter</a>, <a
-                    href="https://www.reddit.com/user/niwasox">Reddit</a>, <a
-                    href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the <a
-                    href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a></p>
+            <p>
+                Made by niwax (
+                <a href="https://twitter.com/niwasox">Twitter</a>,
+                <a href="https://www.reddit.com/user/niwasox">Reddit</a>,
+                <a href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the
+                <a href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a>
+            </p>
         </div>
     </div>
 </body>
