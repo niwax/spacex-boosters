@@ -290,23 +290,6 @@
                 .then(res => create(res.docs));
         }
 
-        var isHidden = false;
-
-        function hideIt(el, byClick = false) {
-            let newState = (byClick && isHidden) ? "block" : "none";
-            if (byClick) {
-                isHidden = !isHidden;
-            }
-            document.getElementById(el).style.display = newState;
-            console.log("hide " + el);
-        }
-        function showIt(el) {
-            document.getElementById(el).style.display = 'block';
-            isHidden = false;
-            console.log("show " + el);
-        }
-
-
         function create(data) {
             let estimates = {
                 "B1001": "B1001 *",
@@ -347,7 +330,8 @@
                 "GEO": 1.4,
                 "ES-L1": 1.5,
                 "HEO": 1.5,
-                "HCO": 1.5
+                "HCO": 1.5,
+                "???": 1
             };
 
             let maxenergy = 0;
@@ -398,7 +382,7 @@
                     mission.apoapsis = orbit.apoapsis_km;
                     mission.inclination = orbit.inclination_deg;
                     mission.mass = flight.payloads.map(x => x.mass_kg).reduce((a, b) => { return a + b; });
-                    mission.orbit = orbit.orbit;
+                    mission.orbit = orbit.orbit || "???";
                     mission.energy = energy[mission.orbit];
                     mission.flightNumber = flight.flight_number;
 
@@ -439,6 +423,12 @@
 
                     boosters[name] = booster;
                 }
+            }
+
+            for (let name in boosters) {
+                boosters[name].missions.sort((a, b) => {
+                    return new Date(a.isoDate).getTime() - new Date(b.isoDate).getTime()
+                });
             }
 
             let descriptionId = 0;
