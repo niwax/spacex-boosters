@@ -391,11 +391,27 @@
                     mission.site = flight.launchpad.name;
 
                     let orbit = flight.payloads[0];
-                    mission.periapsis = orbit.periapsis_km;
-                    mission.apoapsis = orbit.apoapsis_km;
-                    mission.inclination = orbit.inclination_deg;
-                    mission.mass = flight.payloads.map(x => x.mass_kg).reduce((a, b) => { return a + b; });
-                    mission.orbit = orbit.orbit || "???";
+
+                    if (orbit) {
+                        mission.periapsis = Math.round(orbit.periapsis_km) || "???";
+                        mission.apoapsis = Math.round(orbit.apoapsis_km) || "???";
+                        mission.inclination = Math.round(orbit.inclination_deg) || "???";
+                        mission.orbit = orbit.orbit || "???";
+                    }
+                    else {
+                        mission.periapsis = "???";
+                        mission.apoapsis = "???";
+                        mission.inclination = "???";
+                        mission.orbit = "???";
+                    }
+
+                    if (flight.payloads.length > 0) {
+                        mission.mass = flight.payloads.map(x => x.mass_kg).reduce((a, b) => { return a + b; });
+                    }
+                    else {
+                        mission.mass = null;
+                    }
+
                     mission.energy = energy[mission.orbit];
                     mission.flightNumber = flight.flight_number;
 
@@ -506,7 +522,6 @@
                         else {
                             stats[i] = 1;
                         }
-                        console.log(JSON.stringify(stats), booster.name);
 
                         let mission = booster.missions[i];
 
@@ -533,7 +548,7 @@
                                     <p>Launch Pad: ${mission.site}</p>
                                     <p>Target Orbit: ${(mission.periapsis == undefined || mission.periapsis == 0) ?
                                 "unknown" :
-                                "" + Math.round(mission.periapsis) + "kmx" + Math.round(mission.apoapsis) + "km " + Math.round(mission.inclination) + "°"
+                                "" + mission.periapsis + "kmx" + mission.apoapsis + "km " + mission.inclination + "°"
                             }</p>
                                     <p>Mass: ${(mission.mass == undefined) ?
                                 "unknown" :
