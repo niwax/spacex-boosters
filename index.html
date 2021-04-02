@@ -3,611 +3,66 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=800, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=800, initial-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no">
 
     <title>SpaceX Booster List</title>
 
-    <style type="text/css">
-        html,
-        body {
-            width: 100%;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: black;
-            color: white;
-            font-weight: normal;
-            font-size: 0.9em;
-            overflow-x: hidden;
-        }
-
-        #content {
-            max-width: 800px;
-            margin: auto;
-        }
-
-        a {
-            color: white;
-        }
-
-        h1 {
-            font-size: 1.9em;
-        }
-
-        .imprint {
-            color: #777;
-            font-size: 0.8em;
-        }
-
-        .imprint a {
-            color: #999;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            padding: 5px 3px;
-            display: flex;
-            flex-flow: row;
-        }
-
-        .missionList {
-            flex: 1;
-            display: flex;
-            flex-flow: row;
-            flex-wrap: wrap;
-        }
-
-        li:hover {
-            background-color: #202020;
-        }
-
-        li>span {
-            min-height: 24px;
-            line-height: 24px;
-            vertical-align: middle;
-            display: inline-block;
-            position: relative;
-        }
-
-        li .heat {
-            width: 24px;
-            margin-right: 8px;
-            margin-left: 3px;
-            flex-shrink: 0;
-        }
-
-        li .heat .heat-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 24px;
-            height: 24px;
-        }
-
-        li .heat .heat-indicator img {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 24px;
-            height: 24px;
-        }
-
-        li .heat .heat-indicator span {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 24px;
-            height: 24px;
-            overflow: hidden;
-        }
-
-        li .heat .flight-number {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 16px;
-            height: 16px;
-            line-height: 12px;
-            vertical-align: middle;
-            text-align: right;
-            color: #aaa;
-        }
-
-        li .name {
-            font-size: 1.4em;
-            width: 120px;
-            flex-shrink: 0;
-        }
-
-        li .notAvailable {
-            opacity: 0.65;
-            text-decoration: line-through;
-        }
-
-        li .mission {
-            margin: 2px;
-            padding: 2px 6px;
-            height: 16px;
-            border-radius: 8px;
-            line-height: 16px;
-            background-color: #050;
-            border: 1px solid #000;
-            cursor: default;
-        }
-
-        li .success-land {
-            background-color: #450;
-        }
-
-        li .success-sea {
-            background-color: #054;
-        }
-
-        li .landing-failure {
-            background-image: linear-gradient(135deg, #333 50%, #700 50%);
-        }
-
-        li .landing-failure-land {
-            background-image: linear-gradient(135deg, #450 50%, #700 50%);
-        }
-
-        li .landing-failure-sea {
-            background-image: linear-gradient(135deg, #054 50%, #700 50%);
-        }
-
-        li .failure {
-            background-color: #700;
-        }
-
-        li .expended {
-            background-color: #740;
-        }
-
-        li .tentative {
-            background-color: #444;
-            border: 1px dashed #888;
-            color: #aaa;
-        }
-
-        .header {
-            margin-bottom: 16px;
-        }
-
-        .header .heat {
-            margin-left: 0;
-            margin-right: 11px;
-        }
-
-        .header span {
-            font-size: 1em;
-        }
-
-        .mission {
-            position: relative;
-        }
-
-        .mission:hover {
-            border: 1px solid white;
-        }
-
-        .mission .description {
-            display: none;
-            position: absolute;
-            top: 25px;
-            left: 0;
-            padding: 8px;
-            border: 1px solid #555;
-            border-radius: 8px;
-            background-color: #222;
-            width: 250px;
-            z-index: 1000;
-        }
-
-        .mission:hover .description {
-            display: block;
-        }
-
-        h6 {
-            font-size: 1em;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        p {
-            margin: 0;
-            margin-top: 4px;
-        }
-
-        .version {
-            border-top: 1px dashed #555;
-            color: #888;
-            margin-left: 3px;
-            margin-top: 10px;
-            height: 1px;
-            overflow: visible;
-            text-align: right;
-            margin-bottom: 25px;
-        }
-
-        .turnaround-spacer {
-            display: inline-block;
-            overflow: hidden;
-        }
-
-        .turnaround-flex {
-            width: 100%;
-            display: flex;
-            flex-flow: row;
-        }
-
-        .turnaround-line {
-            flex: 1;
-            border-top: 1px solid #666;
-            height: 1px;
-
-            position: relative;
-            top: calc(1em - 1px);
-        }
-
-        .turnaround-label {
-            color: #aaa;
-            font-size: 0.8em;
-            vertical-align: middle;
-        }
-
-        .stats {
-            display: flex;
-            margin-bottom: 5px;
-        }
-
-        .statsbar {
-            text-align: center;
-            padding: 1px 0;
-            color: #eee;
-            overflow: hidden;
-        }
-    </style>
-
-    <script type="text/javascript">
-        'strict'
-
-        function load() {
-            const options = {
-                method: 'POST',
-                body: JSON.stringify({
-                    "query": {},
-                    "options": {
-                        "pagination": false,
-                        "populate": [
-                            "payloads",
-                            "core",
-                            "launchpad",
-                            "rocket",
-                            "ships",
-                            "cores.core"
-                        ]
-                    },
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-
-            fetch("https://api.spacexdata.com/v4/launches/query", options)
-                .then(res => res.json())
-                .then(res => create(res.docs));
-        }
-
-        function create(data) {
-            let estimates = {
-                "B1001": "B1001 *",
-                "B1002": "B1002 *",
-                "B1003": "B1003 *",
-                "B1004": "B1004 *",
-                "B1005": "B1005 *",
-                "B1006": "B1006 *",
-                "B1007": "B1007 *",
-                "B1008": "B1008 *",
-                "Merlin1A": "Falcon 1-1 *",
-                "Merlin2A": "Falcon 1-2 *",
-                "Merlin1C": "Falcon 1-3 *",
-                "Merlin2C": "Falcon 1-4 *",
-                "Merlin3C": "Falcon 1-5 *"
-            };
-
-            let versions = {
-                "B0003": "First Falcon 9 1.0",
-                "B1003 *": "First Falcon 9 1.1",
-                "B1019": "First Falcon 9 Full Thrust",
-                "B1039": "First Falcon 9 FT Block 4",
-                "B1046": "First Falcon 9 FT Block 5"
-            };
-
-            let html = "";
-
-            let boosters = {};
-            let energy = {
-                "VLEO": 1.0,
-                "LEO": 1.0,
-                "SO": 1.0,
-                "PO": 1.03,
-                "SSO": 1.07,
-                "ISS": 0.95,
-                "MEO": 1.2,
-                "GTO": 1.4,
-                "GEO": 1.4,
-                "ES-L1": 1.5,
-                "HEO": 1.5,
-                "HCO": 1.5,
-                "???": 1
-            };
-
-            let maxenergy = 0;
-
-            for (let flight of data) {
-                let flightStyleName = "f" + flight.flight_number;
-                let flightStyle = document.createElement("style");
-                flightStyle.type = "text/css";
-                flightStyle.innerHTML = "span." + flightStyleName + " {border-width:1px;}";
-                document.getElementsByTagName('head')[0].appendChild(flightStyle);
-
-                for (let stage of flight.cores) {
-                    if (!stage.core) {
-                        continue;
-                    }
-
-                    let booster = {
-                        missions: [],
-                        energy: 0,
-                        available: true
-                    };
-
-                    let name = stage.core.serial;
-                    if (name == null) continue;
-
-                    if (estimates.hasOwnProperty(name)) {
-                        name = estimates[name];
-                    }
-
-                    if (boosters.hasOwnProperty(name)) {
-                        booster = boosters[name];
-                    }
-
-                    let mission = {
-                        success: "expended"
-                    };
-
-                    mission.name = flight.payloads.map(x => x.name).join(", ");
-
-                    booster.name = name;
-                    mission.launcher = flight.rocket.name;
-                    mission.date = flight.date_local.replace("T", " ").split("+")[0];
-                    mission.isoDate = flight.date_local;
-                    mission.site = flight.launchpad.name;
-
-                    let orbit = flight.payloads[0];
-
-                    if (orbit) {
-                        mission.periapsis = Math.round(orbit.periapsis_km) || "???";
-                        mission.apoapsis = Math.round(orbit.apoapsis_km) || "???";
-                        mission.inclination = Math.round(orbit.inclination_deg) || "???";
-                        mission.orbit = orbit.orbit || "???";
-                    }
-                    else {
-                        mission.periapsis = "???";
-                        mission.apoapsis = "???";
-                        mission.inclination = "???";
-                        mission.orbit = "???";
-                    }
-
-                    if (flight.payloads.length > 0) {
-                        mission.mass = flight.payloads.map(x => x.mass_kg).reduce((a, b) => { return a + b; });
-                    }
-                    else {
-                        mission.mass = null;
-                    }
-
-                    mission.energy = energy[mission.orbit];
-                    mission.flightNumber = flight.flight_number;
-
-                    if (!flight.success) {
-                        mission.success = "failure";
-                    }
-
-                    if (stage.landing_success) {
-                        if (stage.landing_type == "ASDS") {
-                            mission.success = "success-sea";
-                        }
-                        else {
-                            mission.success = "success-land";
-                        }
-                    }
-                    else {
-                        if (stage.landing_attempt && flight.success) {
-                            if (stage.landing_type == "ASDS") {
-                                mission.success = "landing-failure-sea";
-                            }
-                            else {
-                                mission.success = "landing-failure-land";
-                            }
-                        }
-
-                        booster.available = false;
-                    }
-
-                    if (flight.is_tentative || flight.success == null) {
-                        mission.success = "tentative";
-                        booster.available = true;
-                    }
-
-                    booster.energy += mission.energy;
-                    booster.missions.push(mission);
-
-                    if (maxenergy < booster.energy) maxenergy = booster.energy;
-
-                    boosters[name] = booster;
-                }
-            }
-
-            for (let name in boosters) {
-                boosters[name].missions.sort((a, b) => {
-                    return new Date(a.isoDate).getTime() - new Date(b.isoDate).getTime()
-                });
-            }
-
-            function renderStats(stats) {
-                let html = "";
-                const numbers = ["1st flights", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
-                const colors = ["rgb(90,80,70)", "rgb(80,75,71)", "rgb(70,70,72)", "rgb(60,65,73)"];
-
-                for (let i in stats) {
-                    let f = Math.sqrt(i / 10) * 7;
-
-                    html += `
-                        <div class="statsbar" style="flex: ${stats[i]}; background-color: rgb(${90 - f * 10}, ${80 - f * 5}, ${70 + f * 1})">
-                            ${numbers[i]}
-                        </div>
-                    `;
-                }
-
-                return `
-                    <div class="stats">
-                        ${html}
-                    </div>
-                `;
-            }
-
-            let stats = {};
-
-            for (let name in boosters) {
-                if (boosters.hasOwnProperty(name)) {
-                    if (versions.hasOwnProperty(name)) {
-                        html =
-                            `<div class="version">
-                                ${versions[name]}
-                            </div>
-                            <div>
-                                ${renderStats(stats)}
-                            </div>` + html;
-                        stats = {};
-                    }
-
-                    let booster = boosters[name];
-
-                    let _html = `
-                        <li>
-                            <span class="heat">
-                                <span class="heat-indicator">
-                                    <img src="booster.png" />
-                                    <span style="opacity: ${Math.sqrt(booster.energy / maxenergy)}">
-                                        <img src="soot.png" />
-                                    </span>
-                                </span>
-                                <span class="flight-number">${booster.missions.length}</span>
-                            </span>
-                            <span class="name ${booster.available ? "" : "notAvailable"}">${booster.name}</span>
-                            <span class="missionList">`;
-
-                    let lastMissionDate = new Date();
-
-                    for (let i = 0; i < booster.missions.length; i++) {
-                        if (stats.hasOwnProperty(i)) {
-                            stats[i]++;
-                        }
-                        else {
-                            stats[i] = 1;
-                        }
-
-                        let mission = booster.missions[i];
-
-                        if (i > 0) {
-                            let turnaround = Math.round((new Date(mission.isoDate).getTime() - lastMissionDate.getTime()) / (1000 * 60 * 60 * 24));
-                            _html += `
-                            <span class="turnaround-spacer" style="width: ${turnaround / 3.5}px">
-                                <div class="turnaround-flex">
-                                    <div class="turnaround-line"></div>
-                                    <div class="turnaround-label">${turnaround}</div>
-                                    <div class="turnaround-line"></div>
-                                </div>
-                            </span>
-                            `;
-                        }
-
-                        _html += `
-                            <span class="mission ${mission.success}">
-                                ${mission.orbit}
-                                <span class="description">
-                                    <h6>${mission.name}</h6>
-                                    <p>Date: ${mission.date}</p>
-                                    <p>Launcher: ${mission.launcher}</p>
-                                    <p>Launch Pad: ${mission.site}</p>
-                                    <p>Target Orbit: ${(mission.periapsis == undefined || mission.periapsis == 0) ?
-                                "unknown" :
-                                "" + mission.periapsis + "kmx" + mission.apoapsis + "km " + mission.inclination + "°"
-                            }</p>
-                                    <p>Mass: ${(mission.mass == undefined) ?
-                                "unknown" :
-                                "" + mission.mass + "kg"
-                            }</p>
-                                </span>
-                            </span>`;
-
-                        lastMissionDate = new Date(mission.isoDate);
-                    }
-                    _html += "</span></li>";
-
-                    html = _html + html;
-                }
-            }
-
-            html =
-                `<div>
-                    ${renderStats(stats)}
-                </div>` + html;
-
-            html = `
-                <li class="header">
-                    <span>
-                        <span class="mission success-land">RTLS</span>
-                        <span class="mission success-sea">ASDS</span>
-                        <span class="mission expended">Expended</span>
-                        <span class="mission landing-failure">Landing failure</span>
-                        <span class="mission failure">Failure</span>
-                        <span class="mission tentative">Planned</span>
-                        <span style="color: #777">Hover for more info</span>
-                    </span>
-                </li>` + html;
-
-            document.getElementById("list").innerHTML = html;
-        }
-    </script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script type="text/javascript" src="list.js"></script>
+    <script type="text/javascript" src="timeline.js"></script>
+    <script type="text/javascript" src="data.js"></script>
 </head>
 
-<body onload="load()">
+<body>
     <div id="content">
-        <h1>SpaceX Booster List</h1>
-        <ul id="list">
-            <li>Loading Data</li>
-        </ul>
-        <div>
-            <p>
-                * Some core numbers are not known for early flights.
-                The numbers shown are estimates based on flight order.
-            </p>
+        <div class="top">
+            <div class="centered">
+                <h1>SpaceX Booster List</h1>
+                <div class="header">
+                    <div class="mission success-land">RTLS
+                        <div class="description"> Return To Launch Site</div>
+                    </div>
+                    <div class="mission success-sea">ASDS
+                        <div class="description"> Landed on Autonomous Spaceport Drone Ship</div>
+                    </div>
+                    <div class="mission expended">Expended</div>
+                    <div class="mission landing-failure">Landing failure</div>
+                    <div class="mission failure">Failure</div>
+                    <div class="mission tentative">Planned</div>
+                    <div class="header-text">Hover for more info</div>
+                    <div class="toggle" id="toggle">
+                        <div class="toggle-outer">
+                            <div class="toggle-inner"></div>
+                        </div>
+                        <div class="toggle-text">
+                            Timeline view
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="imprint">
-            <p>
-                Made by niwax (
-                <a href="https://twitter.com/niwasox">Twitter</a>,
-                <a href="https://www.reddit.com/user/niwasox">Reddit</a>,
-                <a href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the
-                <a href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a>
-            </p>
+        <div id="spacer-left"></div>
+        <div id="spacer-right"></div>
+        <div id="main">
+            <div class="centered">
+                <p>Loading Data...</p>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="centered">
+                <p>
+                    * Some core numbers are not known for early flights.
+                    The numbers shown are estimates based on flight order.
+                </p>
+                <p class="imprint">
+                    Made by niwax (
+                    <a href="https://twitter.com/niwasox">Twitter</a>,
+                    <a href="https://www.reddit.com/user/niwasox">Reddit</a>,
+                    <a href="https://forum.nasaspaceflight.com/index.php?action=profile;u=55527">NSF</a>) using the
+                    <a href="https://github.com/r-spacex/SpaceX-API">r/spacex API</a>
+                </p>
+            </div>
         </div>
     </div>
 </body>

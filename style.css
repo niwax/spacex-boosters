@@ -1,0 +1,554 @@
+/* Layout */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: black;
+    color: white;
+    font-weight: normal;
+    font-size: 0.9em;
+}
+
+.top {
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background-color: black;
+    padding-bottom: 3px;
+    z-index: 5000;
+}
+
+@media screen and (min-width: 801px) {
+    .top {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.bottom {
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    background-color: black;
+    padding-bottom: 3px;
+    z-index: 5000;
+}
+
+@media screen and (min-width: 801px) {
+    .bottom {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.centered {
+    width: 800px;
+}
+
+#main .centered {
+    position: sticky;
+    left: 0;
+}
+
+@media screen and (min-width: 801px) {
+    #main .centered {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+#main {
+    min-height: 100%;
+    padding-top: 75px;
+    padding-bottom: 250px;
+    min-height: 100%;
+}
+
+h1 {
+    font-size: 1.9em;
+    padding: 5px;
+}
+
+.imprint {
+    color: #777;
+    font-size: 0.8em;
+}
+
+.imprint a {
+    color: #999;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.header-text {
+    flex: 1;
+    color: #777;
+    margin-left: 4px;
+}
+
+.toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-outer {
+    height: 12px;
+    width: 20px;
+    border-radius: 10px;
+    border: 1px solid white;
+    position: relative;
+    margin-right: 5px;
+}
+
+.toggle-inner {
+    height: 6px;
+    width: 6px;
+    top: 2px;
+    left: 2px;
+    border-radius: 3px;
+    background-color: white;
+    position: absolute;
+}
+
+.toggle-on .toggle-outer {
+    background-color: #444;
+}
+
+.toggle-on .toggle-inner {
+    left: 10px;
+}
+
+#spacer-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: calc((100vw - 800px) / 2);
+    z-index: 3000;
+    background-color: black;
+    opacity: 0.75;
+}
+
+#spacer-right {
+    position: fixed;
+    top: 0;
+    left: calc((100vw - 800px) / 2 + 800px);
+    height: 100%;
+    width: calc((100vw - 800px) / 2);
+    z-index: 3000;
+    background-color: black;
+    opacity: 0.75;
+}
+
+@media screen and (max-width: 801px) {
+    #spacer-left {
+        display: none;
+    }
+
+    #spacer-right {
+        display: none;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Mission badges */
+
+.mission {
+    margin: 2px;
+    padding: 0px 6px;
+    height: 24px;
+    border-radius: 8px;
+    line-height: 22px;
+    border: 1px solid #000;
+    cursor: default;
+    position: relative;
+}
+
+.mission:hover {
+    border: 1px solid white;
+}
+
+.mission .counter {
+    position:absolute;
+    right: -8px;
+    bottom: -8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #666;
+    font-size: 0.8em;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.success-land {
+    background-color: #450;
+}
+
+.success-sea {
+    background-color: #054;
+}
+
+.landing-failure {
+    background-image: linear-gradient(135deg, #333 50%, #700 50%);
+}
+
+.landing-failure-land {
+    background-image: linear-gradient(135deg, #450 50%, #700 50%);
+}
+
+.landing-failure-sea {
+    background-image: linear-gradient(135deg, #054 50%, #700 50%);
+}
+
+.failure {
+    background-color: #700;
+}
+
+.expended {
+    background-color: #740;
+}
+
+.tentative {
+    background-color: #444;
+    border: 1px dashed #888;
+    color: #aaa;
+}
+
+.mission .description {
+    display: none;
+    position: absolute;
+    top: 25px;
+    left: 0px;
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background-color: #222;
+    width: 250px;
+    text-align: left;
+}
+
+.mission .description h6 {
+    font-size: 1.1em;
+}
+
+.mission:hover .description, .main-timeline .mission:hover .description, .main-list .mission:hover .description {
+    position: absolute;
+    display: block;
+    z-index: 5000;
+}
+
+/* List view */
+
+.main-list {
+    width: 800px;
+    position: sticky;
+    left: 0;
+    padding-bottom: 150px;
+}
+
+@media screen and (min-width: 801px) {
+    .main-list {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.main-list .booster {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    padding: 3px;
+}
+
+.main-list .booster:hover {
+    background-color: #222;
+}
+
+.main-list .booster .name {
+    width: 80px;
+    font-size: 1.4em;
+}
+
+.main-list .booster .name.unavailable {
+    color: #777;
+    text-decoration: line-through;
+}
+
+.main-list .booster .missions {
+    flex: 1;
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.main-list .turnaround {
+    display: flex;
+    flex-flow: row;
+    color: #aaa;
+    font-size: 0.8em;
+    align-items: center;
+}
+
+.main-list .turnaround .spacer {
+    flex: 1;
+    border-top: 1px solid #666;
+    height: 1px;
+}
+
+.main-list .block-upgrade {
+    border-top: 1px dashed #888;
+    color: #888;
+    text-align: right;
+}
+
+.main-list .booster .indicator {
+    background-color: #333;
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    margin-right: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-list .booster .indicator-inner {
+    background-color: #666;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+}
+
+.main-list .booster .indicator-number {
+    top: 0;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    vertical-align: middle;
+    position: absolute;
+}
+
+.main-list .stats {
+    display: flex;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.main-list .stats .statsbar {
+    text-align: center;
+    padding: 1px 0;
+    color: #eee;
+    overflow: hidden;
+}
+
+/* Timeline view */
+
+.main-timeline {
+    padding-bottom: 150px;
+    left: 0;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.main-timeline .turnaround {
+    display: flex;
+    flex-flow: row;
+    color: #aaa;
+    font-size: 0.8em;
+    align-items: center;
+}
+
+.main-timeline .turnaround .spacer {
+    flex: 1;
+    border-top: 1px solid #666;
+    height: 1px;
+}
+
+.main-timeline .block-upgrade {
+    width: 800px;
+    position: sticky;
+    left: 0;
+    border-top: 1px dashed #888;
+    color: #888;
+    text-align: right;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .block-upgrade {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.main-timeline .booster {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    height: 34px;
+}
+
+.main-timeline .booster .booster-text-outer {
+    position: sticky;
+    left: 0;
+    height: 0;
+    width: 100px;
+    overflow: visible;
+    z-index: 1000;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .booster .booster-text-outer {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.main-timeline .booster .booster-text {
+    top: -3px;
+    padding: 3px;
+    position: absolute;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.main-timeline .booster:hover, .main-timeline .booster:hover .booster-text {
+    background-color: #222;
+}
+
+.main-timeline .booster .name {
+    width: 80px;
+    font-size: 1.4em;
+}
+
+.main-timeline .booster .name.unavailable {
+    color: #777;
+    text-decoration: line-through;
+}
+
+.main-timeline .booster .indicator {
+    background-color: #333;
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+    margin-right: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-timeline .booster .indicator-inner {
+    background-color: #666;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+}
+
+.main-timeline .booster .indicator-number {
+    top: 0;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    vertical-align: middle;
+    position: absolute;
+}
+
+.main-timeline .missions {
+    position: relative;
+    height: 28px;
+}
+
+.main-timeline .missions .mission-outer {
+    position: absolute;
+    margin-left: -30px;
+    width: 60px;
+    top: 2px;
+    text-align: center;
+}
+
+.main-timeline .missions .mission-outer .mission {
+    display: inline-block;
+    margin: auto;
+}
+
+.main-timeline .turnaround {
+    position: absolute;
+    display: flex;
+    flex-flow: row;
+    color: #aaa;
+    font-size: 0.8em;
+    align-items: center;
+    top: 6px;
+}
+
+.main-timeline .turnaround .spacer {
+    flex: 1;
+    border-top: 1px solid #666;
+    height: 1px;
+}
+
+.main-timeline .stats {
+    width: 800px;
+    position: sticky;
+    left: 0;
+    display: flex;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .stats {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
+.main-timeline .stats .statsbar {
+    text-align: center;
+    padding: 1px 0;
+    color: #eee;
+    overflow: hidden;
+}
+
+.main-timeline .dates {
+    top: 75px;
+    position: sticky;
+    height: 30px;
+
+    background-color: black;
+    z-index: 2500;
+}
+
+.main-timeline .dates .date {
+    border-left: 1px solid white;
+    padding: 2px;
+    font-size: 1.4em;
+    position: absolute;
+}
+
+.main-timeline .dates-low {
+    top: 75px;
+    position: sticky;
+}
+
+.main-timeline .dates-low .dateline {
+    border-left: 1px solid #333;
+    height: 100vh;
+    width: 1px;    
+    position: absolute;
+    z-index: -1;
+}
