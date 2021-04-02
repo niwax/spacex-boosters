@@ -17,21 +17,33 @@ body {
 .top {
     width: 100%;
     top: 0;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     position: fixed;
     background-color: black;
     padding-bottom: 3px;
     z-index: 5000;
 }
 
+@media screen and (min-width: 801px) {
+    .top {
+        left: calc((100vw - 800px) / 2);
+    }
+}
+
 .bottom {
     width: 100%;
     bottom: 0;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     position: fixed;
     background-color: black;
     padding-bottom: 3px;
     z-index: 5000;
+}
+
+@media screen and (min-width: 801px) {
+    .bottom {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .centered {
@@ -40,7 +52,13 @@ body {
 
 #main .centered {
     position: sticky;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
+}
+
+@media screen and (min-width: 801px) {
+    #main .centered {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 #main {
@@ -128,6 +146,16 @@ h1 {
     z-index: 3000;
     background-color: black;
     opacity: 0.75;
+}
+
+@media screen and (max-width: 801px) {
+    #spacer-left {
+        display: none;
+    }
+
+    #spacer-right {
+        display: none;
+    }
 }
 
 /* Mission badges */
@@ -223,8 +251,14 @@ h1 {
 .main-list {
     width: 800px;
     position: sticky;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     padding-bottom: 150px;
+}
+
+@media screen and (min-width: 801px) {
+    .main-list {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .main-list .booster {
@@ -320,7 +354,13 @@ h1 {
 
 .main-timeline {
     padding-bottom: 150px;
-    padding-left: calc((100vw - 800px) / 2);
+    left: 0;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .main-timeline .turnaround {
@@ -340,10 +380,16 @@ h1 {
 .main-timeline .block-upgrade {
     width: 800px;
     position: sticky;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     border-top: 1px dashed #888;
     color: #888;
     text-align: right;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .block-upgrade {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .main-timeline .booster {
@@ -354,11 +400,17 @@ h1 {
 
 .main-timeline .booster .booster-text-outer {
     position: sticky;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     height: 0;
     width: 100px;
     overflow: visible;
     z-index: 1000;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .booster .booster-text-outer {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .main-timeline .booster .booster-text {
@@ -449,10 +501,16 @@ h1 {
 .main-timeline .stats {
     width: 800px;
     position: sticky;
-    left: calc((100vw - 800px) / 2);
+    left: 0;
     display: flex;
     margin-top: 3px;
     margin-bottom: 3px;
+}
+
+@media screen and (min-width: 801px) {
+    .main-timeline .stats {
+        left: calc((100vw - 800px) / 2);
+    }
 }
 
 .main-timeline .stats .statsbar {
