@@ -41,7 +41,7 @@ function renderTimeline() {
 
     maxSize = Math.round((new Date().getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24) * 2 + 250 + window.innerWidth - 800);
     window.setTimeout(_ => {
-        window.scrollTo({ top: 0, left: maxSize - window.innerWidth, behavior: "smooth" });
+        window.scrollTo({ top: 0, left: maxSize - window.innerWidth - 400, behavior: "smooth" });
     }, 100);
 }
 
@@ -61,7 +61,7 @@ function renderTimelineYears() {
     }));
 
     for (let i = min; i <= max; i++) {
-        let position = Math.round((new Date(i, 1, 1).getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24) * 2 + 120);
+        let position = Math.round((new Date(i, 0, 0).getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24) * 2 + 120);
 
         html1 += `
             <div class="date" style="left: ${position}px">
