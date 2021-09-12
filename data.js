@@ -13,7 +13,6 @@ function load(callback) {
                 "pagination": false,
                 "populate": [
                     "payloads",
-                    "core",
                     "launchpad",
                     "rocket",
                     "ships",
