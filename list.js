@@ -27,7 +27,7 @@ function renderList() {
 
 function renderStats(block) {
     let html = "";
-    const numbers = ["1st flights", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
+    const numbers = ["1st flights", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "13th", "14th", "15th"];
 
     let stats = {};
 
